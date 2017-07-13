@@ -4,7 +4,7 @@
 
 from flask import Flask, request
 import json
-import re
+import string
 
 app = Flask(__name__)
 
@@ -19,17 +19,18 @@ def is_palindrome():
        $ curl -XPOST -d '{"string_id": "ooppoo", "string2_id": "test"}'   -H "Content-Type:application/json"   http://127.0.0.1:8888
     """
     if "string_id" in request.json:
-        string = request.json["string_id"]
+        mystring = request.json["string_id"]
     else:
-        string = None
-    if request.method == 'POST' and string is not None:
+        mystring = None
+    if request.method == 'POST' and mystring is not None:
         # delete all non-word character, digits, underscores
-        string = re.sub(r'[\W\d_]','',string)
+        #mystring = re.sub(r'[\W\d_]','',mystring)
+        mystring = mystring.translate(str.maketrans('','',string.whitespace)).translate(str.maketrans('','',string.digits)).translate(str.maketrans('','',string.punctuation))
         # check if string is equal to reverse string itself
-        if string == string[::-1]:
-            return string + " is palindrome\n"
+        if mystring == mystring[::-1]:
+            return mystring + " is palindrome\n"
         else:
-            return string + " is NOT palindrome\n"
+            return mystring + " is NOT palindrome\n"
     else:
         return "Please provide string_id in JSON\n"
 
